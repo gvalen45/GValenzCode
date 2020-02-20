@@ -1,0 +1,438 @@
+/****************************************************************
+Gabriel Valenzuela 
+
+This program creates a train using various diffrent classes such 
+as a Engine class to create a engine and a FreightCar class
+that creates the carts along with a Container class that creates
+the shape of the container and Contents class. 
+****************************************************************/
+
+import java.util.*;
+import java.util.Scanner;
+
+abstract class RollingStock {
+   public static Scanner kb = new Scanner(System.in);
+   //Delcare variables
+	private String _ownersName;
+	private int _iD;
+	private double _frameWeight;
+   
+   //RollingStock constructor
+	public RollingStock(String ownersName, int iD, double frameWeight) {
+
+		_frameWeight = frameWeight;
+		_ownersName = ownersName;
+		_iD = iD;
+
+	}
+   //Accesor for owners Name
+	public String getOwnersName() {
+
+		return _ownersName;
+	}
+   //Accesor for ID
+	public int getID() {
+
+		return _iD;
+	}
+   //Accesor for Frame weight
+	public double getFrameWeight() {
+
+		return _frameWeight;
+	}
+   //To string to print the class's contents
+   public String toString(){
+   
+   return "Owner's Name : " + getOwnersName() + "\nID : " + getID() +
+          "\nFrame Weight : " + getFrameWeight();
+   
+   }
+   
+   
+}
+//Train class creates a engine and a arrayList of freight cars
+//To essentailly make a train
+class Train {
+   
+   public static Scanner kb = new Scanner(System.in);
+   
+   //Declared Variables 
+   Engine makeEngine;
+   private String _engineersName;
+	//Creates the ArrayList of the FrieghtCars class
+   private ArrayList<FreightCar> fleet = new ArrayList<FreightCar>();
+   
+   //Train constructor
+   public Train(String engineersName, Engine _makeEngine){
+   
+   _engineersName = engineersName;
+   makeEngine = _makeEngine;
+   
+   }
+   //Method that adds a FreightCar object to the arrayList
+   public void addFreightCar(FreightCar car){
+      
+      fleet.add(car);
+   }
+   //Method that deletes a FreightCar object from the arrayList
+   public void deleteFreightCar(int ID){
+   
+   fleet.remove(ID);
+   //Updates size of the ArrayList
+   fleet.trimToSize();
+   }
+   //Setter for loadFactor given FreightCar ID
+   public void changeLoadFactor(int ID, double load){
+   //Creates a copy of FreightCar at ID , sets the new load Factor on the copy
+   //then inserts the copy at the ID given
+   FreightCar newLoadCar = fleet.get(ID);
+   newLoadCar.setLoadFactor(load);
+   fleet.set(ID,newLoadCar);
+   }
+   //Accesor for  Engineers Name
+   public String getEngineersName(){
+   
+   return _engineersName;
+   }
+   //method calculates the fleets total weight and returns it 
+   public double getTotalFleetWeight(){
+   
+   double getTotalWeight = 0;
+    //For loop cycles through every FreightCar in the ArrayList and adds 
+    //their weights together
+    for( int ix = 0; ix < fleet.size(); ix++)
+    {
+      FreightCar countCar = fleet.get(ix);
+      getTotalWeight = getTotalWeight + countCar.getTotalWeight();
+    }
+   return getTotalWeight;
+   }
+   
+   //method calculates the fleets total value and returns it 
+   public double getTotalFleetValue(){
+   
+   double getTotalValue = 0;
+    //For loop cycles through every FreightCar in the ArrayList and adds 
+    //their value together
+    for( int ix = 0; ix < fleet.size(); ix++)
+    {
+      FreightCar countCar = fleet.get(ix);
+      getTotalValue = getTotalValue + countCar.getTotalValue();
+    }
+   return getTotalValue;
+   }
+   //to string that returns every FreightCar using the FreightCar toString
+   public String toString(){
+   String fleetString = null;
+   
+   for( int ix = 0; ix < fleet.size(); ix++){
+   FreightCar countCar = fleet.get(ix);
+
+   fleetString = countCar.toString() + "\n";
+   }
+   
+   
+   return "Engineer's Name : " + getEngineersName() + "\n" + 
+           makeEngine.toString() + "\n" + fleetString;
+   
+   }
+   //method returns a brief summary of each cars Value and  weight 
+   public String displayBriefSummary(){
+   String briefSummary = null;
+   
+   for( int ix = 0; ix < fleet.size(); ix++){
+   FreightCar countCar = fleet.get(ix);
+   
+   briefSummary = briefSummary + "\nID: " + countCar.getID() + " Total Value: " 
+                  + countCar.getTotalValue()
+   +" Car Weight: " + countCar.getTotalWeight() + " \n";
+
+   }
+   return briefSummary;
+   }
+   //method returns the trains total Value and  weight 
+   //As well as a message displaying if the pulling capacity has been reached
+   public String displayTotals(){
+   
+   if(makeEngine.getPullingCapacity() < getTotalFleetWeight()){
+    return "Total weight of the train is :" + getTotalFleetWeight() + "\n"+
+           "Total value of the train is :" + getTotalFleetValue() + "\n"
+           + "Total number of cars is :" + fleet.size() + "\n" +
+           "The train's total weight exceeds the engine's pulling capacity!";
+   }
+   
+   
+   return "Total weight of the train is :" + getTotalFleetWeight() + "\n"+
+           "Total value of the train is :" + getTotalFleetValue() + "\n"
+           + "Total number of cars is :" + fleet.size()+ "\n" +
+           "The train's pulling capacity has not been met!";
+   }
+
+}
+//Engine class creates a engine for the Train
+class Engine extends RollingStock {
+
+	private double _pullingCapacity;
+   
+   //Engine Constructor 
+	public Engine(String ownersName, int iD, double frameWeight, 
+                 double pullingCapacity)
+
+	{
+		super(ownersName, iD, frameWeight);
+		_pullingCapacity = pullingCapacity;
+	}
+   //Accesor
+	public double getPullingCapacity() {
+
+		return _pullingCapacity;
+	}
+   //ToString returns Engines conents in a string
+   public String toString(){
+   
+   
+   return super.toString() + "\nPulling Capacity : " + getPullingCapacity();
+   
+   }
+   
+   
+}
+
+class FreightCar extends RollingStock {
+
+	private double _loadFactor;
+	private Container makeContainer;
+	private Contents makeContents;
+
+	public FreightCar(String ownersName, int iD, double frameWeight, 
+                     double loadFactor, Container newContainer,
+			            Contents newContents)
+
+	{
+		super(ownersName, iD, frameWeight);
+		_loadFactor = loadFactor;
+		makeContainer = newContainer;
+		makeContents = newContents;
+
+	}
+
+		
+	public double getTotalWeight() {
+
+		
+		return (getFrameWeight() + makeContainer.getWallWeight() +  
+             (makeContainer.getInteriorVolume() + makeContents.getDensity() 
+             * getLoadFactor()));
+	}
+
+	public double getTotalValue() {
+
+		return makeContents.getValue();
+	}
+
+	public double getLoadFactor() {
+
+		return _loadFactor;
+	}
+
+	public void setLoadFactor(double newLoadFactor) {
+
+		_loadFactor = newLoadFactor;
+	}
+   
+   public String toString(){
+      
+      return super.toString() + "\nLoad Factor : " + getLoadFactor() + "\n" +
+             makeContainer.toString() + "\n" + makeContents.toString();
+      }
+
+}
+
+
+abstract class Container {
+
+	private double _wallThickness;
+	private double _wallDensity;
+
+	public Container(double wallThickness, double wallDensity) {
+
+		_wallThickness = wallThickness;
+		_wallDensity = wallDensity;
+
+	}
+
+	public double getWallThickness() {
+
+		return _wallThickness;
+	}
+
+	public double getWallDensity() {
+
+		return _wallDensity;
+	}
+
+	abstract public double getExteriorVolume();
+
+	abstract public double getInteriorVolume();
+
+	public double getWallVolume() {
+
+		return getExteriorVolume() - getInteriorVolume();
+	}
+
+	public double getWallWeight() {
+
+		return _wallDensity * getWallVolume();
+	}
+   public String toString(){
+   
+   
+   return "Wall Thickness : " + getWallThickness() + "\n Wall Density : " 
+          + getWallThickness() + "\n Exterior Volume : " + getExteriorVolume()
+          + "\nInterior Volume : " + getInteriorVolume();
+   
+   }
+
+}
+
+class TrapezoidBox extends Container {
+
+	private double _upperLength;
+	private double _lowerLength;
+	private double _width;
+	private double _height;
+
+	public TrapezoidBox(double wallThickness, double wallDensity, 
+                       double upperLength, double lowerLength, double width,
+			              double height) {
+
+		super(wallThickness, wallDensity);
+		_upperLength = upperLength;
+		_lowerLength = lowerLength;
+		_width = width;
+		_height = height;
+	}
+
+	public double getExteriorVolume() {
+
+		return (1 / 2) * (_upperLength + _lowerLength) * (_width) * (_height);
+	}
+
+	public double getInteriorVolume() {
+
+		return (1 / 2) * ((_upperLength - (2 * getWallThickness())) + 
+             (_lowerLength - (2 * getWallThickness())))
+				 * (_width - (2 * getWallThickness())) * (_height 
+             * getWallThickness());
+	}
+
+	public double getUpperLength() {
+
+		return _upperLength;
+	}
+
+	public double getLowerLength() {
+
+		return _lowerLength;
+	}
+
+	public double getWidth() {
+
+		return _width;
+	}
+
+	public double getHeight() {
+
+		return _height;
+	}
+   public String toString(){
+   
+   return super.toString() + "\nUpper Length : " + getUpperLength() 
+          + "\nLower Length : " + getLowerLength() + "\nWidth : " 
+          + getWidth() + "\nHeight : " + getHeight();
+   }
+}
+
+class CylinderBox extends Container {
+
+	private double _height;
+	private double _radius;
+
+	public CylinderBox(double wallThickness, double wallDensity, double height, 
+                      double radius) {
+
+		super(wallThickness, wallDensity);
+		_height = height;
+		_radius = radius;
+
+	}
+
+	public double getExteriorVolume() {
+
+		return (Math.PI) * (Math.pow(_radius, 2)) * _height;
+	}
+
+	public double getInteriorVolume() {
+
+		return (Math.PI) * (Math.pow(_radius - getWallThickness(), 2)) * 
+             (_height - (2 * getWallThickness()));
+	}
+
+	public double getHeight() {
+
+		return _height;
+	}
+
+	public double getRadius() {
+
+		return _radius;
+	}
+   public String toString(){
+   
+   return super.toString() + "\nHeight : " + getHeight() + "\nRadius : " 
+          + getRadius() ;
+   }
+
+}
+
+class Contents {
+
+	private String _name;
+	private double _density;
+	private double _value;
+
+	public Contents(String name, double density, double value) {
+
+		_name = name;
+		_density = density;
+		_value = value;
+	}
+
+	public String getName() {
+
+		return _name;
+	}
+
+	public double getDensity() {
+
+		return _density;
+	}
+
+	public double getValue() {
+
+		return _value;
+	}
+
+	public void setValue(double value) {
+
+		value = _value;
+	}
+   public String toString(){
+   
+   
+   return "\nName : " + getName() + "\nDensity : " + getDensity() +
+          "\nValue : " + getValue();
+   
+   
+   }
+}
