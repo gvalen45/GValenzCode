@@ -1,0 +1,147 @@
+/****************************************************************
+Jose Gabriel Valenzuela, Feb. 14th 2019 - MyGrade
+
+This program determines the letter grade for CSC110AB(online).
+The user is asked to input scores on programming assignmets, MPL 
+Homework and a Final Exam. The grade is then determined using
+if and else statements that calculate their letter grade based on
+the three user inputs.
+****************************************************************/
+import java.util.Scanner;
+
+import java.lang.Math;
+
+public class MyGrade {
+
+	// Declares constants that will not chnage for the grade range boundaries
+	public static final int A_GRADE = 90;
+	public static final int B_GRADE = 80;
+	public static final int C_GRADE = 70;
+	public static final int D_GRADE = 60;
+   public static final int FINAL_EXAM_SIXTY_PERCENT_SCORE = 24;
+
+	public static void main(String[] arg) {
+      
+      // Declares variables
+		int programmingAssignmetsScore;
+		int mplHomeworkScore;
+		int finalExamScore;
+		double programmingAssigmentsPercent;
+		double mplHomeworkPercent;
+		double finalExamPercent;
+		double gradePercent;
+		double roundedGradePercent;
+      
+      // Chars that hold letter grade
+      char aGrade = 'A';
+		char bGrade = 'B';
+		char cGrade = 'C';
+		char dGrade = 'D';
+		char fGrade = 'F';
+      
+      // Creates scanner
+		Scanner keyboard = new Scanner(System.in);
+
+		// Print statements that explain the purpose of the program to the user
+		System.out.println("Hello Student! This program is called MyGrade");
+		System.out.println("this program will help you determine your semester");
+		System.out.println("grade using your programming assignmets, MPL ");
+		System.out.println("Homework and Final Exam scores. \n");
+
+		System.out.println("Please enter your points earned in each category");
+
+		// Ask user to enter input on Programming Assingments, MPL Homework and Final Exam scores
+		System.out.print("Please enter Programming Assignment points earned: ");
+		programmingAssignmetsScore = keyboard.nextInt();
+
+		System.out.print("Please enter MPL Homework points earned: ");
+		mplHomeworkScore = keyboard.nextInt();
+
+		System.out.print("Please enter Final Exam points earned: ");
+		finalExamScore = keyboard.nextInt();
+		System.out.println();
+
+		// If and else statements that check if the user input is between
+      // 0 and 100 and if not displays a error message
+		if (programmingAssignmetsScore < 0 || programmingAssignmetsScore > 100) {
+			System.out.print("The percentage entered for the Programming Assignments");
+			System.out.println(" must be between 0 and 100, inclusive.");
+		} else if (mplHomeworkScore < 0 || mplHomeworkScore > 100) {
+			System.out.print("The percentage entered for the MPL Homework");
+			System.out.println(" must be between 0 and 100, inclusive.");
+		} else if (finalExamScore < 0 || finalExamScore > 100) {
+			System.out.print("The percentage entered for the Final Exam");
+			System.out.println(" must be between 0 and 100, inclusive.");
+		   
+       
+      } else {
+
+			// Calculates grade percents of MPL Homework, Programming assignments and final exam 
+			finalExamPercent = finalExamScore * 0.40;
+			programmingAssigmentsPercent = programmingAssignmetsScore * 0.40;
+			mplHomeworkPercent = mplHomeworkScore * 0.20;
+			
+         // Sets  gradePercent variable equal to overall grade percent
+         gradePercent = mplHomeworkPercent + programmingAssigmentsPercent + finalExamPercent;
+			
+         // Rounds the grade percent up or down 
+         roundedGradePercent = Math.round(gradePercent);
+
+         // Displays grade percents for each grade category
+			System.out.printf("Programming Assignment points earned: %6.1f \n", programmingAssigmentsPercent);
+			System.out.printf("MPL Homework points earned: %16.1f \n", mplHomeworkPercent);
+			System.out.printf("Final Exam points earned: %18.1f \n", finalExamPercent);
+			System.out.printf("Total number of points earned: %13.1f \n", gradePercent);
+         
+         // If and else statement that checks if the student passed the final exam
+			if (finalExamPercent >= FINAL_EXAM_SIXTY_PERCENT_SCORE) {
+            
+            // If and else that determines whether the student recieved a A grade 
+				if (roundedGradePercent >= A_GRADE) {
+                 
+               //Prints the students A grade
+					System.out.printf("Student's letter grade earned: %13s \n", aGrade);
+					System.out.println("    Great job! You will have no problem in CSC205.");
+
+            // If and else that determines whether the student recieved a B grade
+				} else if (roundedGradePercent >= B_GRADE) {
+            
+               //Prints the students B grade
+               System.out.printf("Student's letter grade earned: %13s \n", bGrade);
+					System.out.println("    Good job! You should have little trouble in CSC205.");
+
+            // If and else that determines whether the student recieved a C grade
+				} else if (roundedGradePercent >= C_GRADE) {
+               
+               //Prints the students C grade
+               System.out.printf("Student's letter grade earned: %13s \n", cGrade);
+					System.out.println("    Ok, you passed, but you may be challenged in CSC205.");
+				            
+            // If and else that determines whether the student recieved a D grade
+            }else if (roundedGradePercent >= D_GRADE) {
+               
+               //Prints the students D grade
+               System.out.printf("Student's letter grade earned: %13s \n", dGrade);
+					System.out.println("    When you retake this course, you will be able to do much better.");
+           
+            // If and else that determines whether the student recieved a F grade < 60
+				} else {
+               
+               //Prints the students F grade
+					System.out.printf("Student's letter grade earned: %13s \n", fGrade);
+					System.out.println("    You did not put forth enough effort to pass this course.");
+
+				}
+         // Else that determines the student failed the exam
+			} else {
+				
+            // Prints the students F grade and displays they failed the final exam
+            System.out.printf("Student's letter grade earned: %13s \n", fGrade);
+				System.out.print("      You did not score enough points on the final exam to");
+				System.out.println(" pass this course.");
+			}
+		}
+      // Prints that the program is Terminating
+		System.out.print("MyGrade is now Terminating.");
+	}
+}
