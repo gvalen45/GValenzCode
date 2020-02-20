@@ -1,0 +1,244 @@
+/******************************************************************
+Gabriel Valenzuela 
+This program creates a train using various diffrent classes such 
+as a Engine class to create a engine and a FreightCar class
+that creates the carts along with a Container class that creates
+the shape of the container and Contents class. 
+
+******************************************************************/
+
+import java.util.*;
+
+public class Program5 {
+
+	public static Scanner kb = new Scanner(System.in);
+
+	public static void main(String[] args) {
+      //Declare variables
+		final double maxLoad;
+      char userChar;
+		//Welcome message
+      System.out.println("Welcome to the J&A(Johnstown and Altoona) Railroad");
+		System.out.println("Train program!");
+		
+      //prompts the user for inputs
+		System.out.println("First let's create a Engine! \n");
+      Train newTrain = createNewTrain();
+		System.out.println("To begin what is the maximum acceptable load");
+		System.out.println("through out the entire trip?");
+      maxLoad = kb.nextDouble();
+      //loop repeats until user enters 'F"
+		do {
+
+         //Displays menu options and ask for input
+			System.out.println("What option would you  like to select?");
+			System.out.println("(A) Add a car?");
+			System.out.println("(B) Display a complete description of the characteristics");
+			System.out.println("of the train, engine, and cars");
+			System.out.println("(C) Display a brief summary identifying ");
+			System.out.println("each cars ID, weight, value and if any cars");
+			System.out.println("exceed the max load in weight");
+			System.out.println("(D) Display jus the total weight and value of the train");
+			System.out.println("as well as the number of the cars and if the train's");
+			System.out.println("weight exceeds the max load");
+			System.out.println("(E) start a new train (with a new engine)");
+			System.out.println("(F) exit the program");
+			userChar = kb.next().toUpperCase().charAt(0);
+         
+         //If else statemets filter user input to a certain case
+			if (userChar == 'A') {
+				System.out.println("You have selected option A");
+				//Adds a train to the newTrain using the class Train's 
+            //addFreightCar() method and addACar() to pass a FrieghtCar
+            newTrain.addFreightCar(addACar());
+
+			} else if (userChar == 'B') {
+				System.out.println("You have selected option B");
+            System.out.println("A complete description of the characteristics");
+            System.out.println("of the train, engine, and cars will be displayed");
+            //Calls trains toString
+            System.out.print(newTrain.toString());
+			} else if (userChar == 'C') {
+
+				System.out.println("You have selected option C");
+            System.out.print("A Brief Summary will be displayed");
+            //Calls trains displayBriefSummary() method
+				System.out.println(newTrain.displayBriefSummary());
+
+			} else if (userChar == 'D') {
+
+				System.out.println("You have selected option D");
+            System.out.println("The Train's total weight, value and current pulling");
+            System.out.println("capacity state will be displayed");
+            //Calls trains displayTotals() method
+				System.out.println(newTrain.displayTotals());
+
+			} else if (userChar == 'E') {
+
+				System.out.println("You have selected option E");
+		      System.out.println("Let's create a Engine! \n");
+            //Calls the createNewTrain() method which constructs a new train Engine
+            newTrain = createNewTrain();    
+
+			} else {
+            //Displays error message
+				System.out.println("INVALID OPTION: Try Again Make sure");
+				System.out.println("Your selection is capitalized");
+			}
+       //DO while exits once 'F' is entered
+		} while (userChar != 'F');
+            System.out.print("Exitting the program");
+            
+	}
+
+	// Method for Option (a) Add a car
+	private static FreightCar addACar() {
+      //variable declariations
+		String ownersName;
+		String engineersName;
+		int iD;
+		double frameWeight;
+		double loadFactor;
+		FreightCar newCar;
+		Contents newContents;
+		Container newContainer;
+      
+      //Prompts user to enter data
+		System.out.println("Add a  Freight Car : \n");
+		System.out.println("What is the name of the owner?");
+		ownersName = kb.next();
+		System.out.println("What is the ID of the Freight Car?");
+		iD = kb.nextInt();
+		System.out.println("What is the frame weight of the Freight Car?");
+		frameWeight = kb.nextDouble();
+		System.out.print("What is the Load Factor?");
+		loadFactor = kb.nextDouble();
+		loadFactor = loadFactor / 100;
+		newContents = makeContents();
+		newContainer = makeContainer();
+      //Creates a FreightCar and returns it
+		newCar = new FreightCar(ownersName, iD, frameWeight, loadFactor, newContainer, newContents);
+		return newCar;
+
+	}
+
+	// Method for Option (e) Creates a new train
+	private static Train createNewTrain() {
+      //variable declariations
+      String ownersName;
+		String engineersName;
+		int iD;
+		double frameWeight;
+		double pullingCapacity;
+
+      //Prompts user to enter data
+		System.out.println("What is the name of the owner?");
+		ownersName = kb.next();
+
+      //If is used to enclose return Statement of the new Train
+		if (ownersName != null) {
+			//Prompts user for data inputs for a new Engine
+         System.out.println("What is the ID of the engine?");
+			iD = kb.nextInt();
+			System.out.println("What is the frame weight of the engine?");
+			frameWeight = kb.nextDouble();
+			System.out.println("What is the pulling capacity of the engine?");
+			pullingCapacity = kb.nextDouble();
+			//Creates new Engine
+         Engine createdEngine = new Engine(ownersName, iD, frameWeight, 
+                                           pullingCapacity);
+
+			System.out.println("Lastly, what is the engineers name?");
+			engineersName = kb.next();
+			//Creates a new Train and returns it
+         Train createdTrain = new Train(engineersName, createdEngine);
+			return createdTrain;
+
+		}
+      //Returns null
+		return null;
+
+	}
+   //method that creates the Contents for the FrieghtCar
+	private static Contents makeContents() {
+      //Declare variables
+		String contentsName;
+		double contentsDensity;
+		double contentsValue;
+      
+      //Ask for data input
+		System.out.print("Enter the name of the contents: ");
+		contentsName = kb.next();
+		System.out.print("Enter the Density of the contents (Pounds per Cubic Foot): ");
+		contentsDensity = kb.nextDouble();
+		System.out.print("Enter the value of the contents (Dollars per Pound: ");
+		contentsValue = kb.nextDouble();
+      
+      //Creates Contents instance and returns it
+		Contents makeContents = new Contents(contentsName, contentsDensity, 
+                                           contentsValue);
+		return makeContents;
+	}
+   //method that creates the Container for the FrieghtCar
+	private static Container makeContainer() {
+
+      //Declare variables
+		int userContainerPick;
+		double wallThickness;
+		double wallDensity;
+
+      //Ask for data input
+		System.out.print("Enter the Wall Thickness: ");
+		wallThickness = kb.nextDouble();
+		System.out.print("Enter the Wall Density: ");
+		wallDensity = kb.nextDouble();
+		System.out.println("What shape is the container?");
+		System.out.print("Enter 1 for a Trapezoid box \n" 
+                        + "or  2 for a Cylinder box : ");
+		userContainerPick = kb.nextInt();
+      
+      //If and else selects container type TrapezoidBox or CylinderBox
+		if (userContainerPick == 1) {
+			
+          //Declare variables
+         double tUpperLength;
+			double tLowerLength;
+			double tWidth;
+			double tHeight;
+
+         //Ask for data input
+			System.out.print("Enter the upper length of the container: ");
+			tUpperLength = kb.nextDouble();
+			System.out.print("Enter the lower length of the container : ");
+			tLowerLength = kb.nextDouble();
+			System.out.print("Enter the width of the container : ");
+			tWidth = kb.nextDouble();
+			System.out.print("Enter the height of the container : ");
+			tHeight = kb.nextDouble();
+
+         //Creates TrapezoidBox Instance and returns it
+			TrapezoidBox box = new TrapezoidBox(wallThickness, wallDensity, 
+                                             tUpperLength, tLowerLength, 
+                                             tWidth,tHeight);
+			return box;
+		} else if (userContainerPick == 2) {
+			//variables
+         double cHeight;
+			double cRadius;
+         //Ask for data input for CylinderBox
+			System.out.print("Enter the Height of the container : ");
+			cHeight = kb.nextDouble();
+			System.out.print("Enter the Radius of the container : ");
+			cRadius = kb.nextDouble();
+         
+         //Creates CylinderBox Instance and returns it
+			CylinderBox box = new CylinderBox(wallThickness, wallDensity, cHeight, cRadius);
+			return box;
+		} else {
+			//Returns Container null otherwise
+         System.out.println("INVALID INPUT FOR CONTAINER SHAPE");
+			return null;
+		}
+
+	}
+}
