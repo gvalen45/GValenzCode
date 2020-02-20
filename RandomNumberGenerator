@@ -1,0 +1,140 @@
+/******************************************
+Jose Gabriel Valenzuela 
+Program where the user decides for a amount of
+random numbers to be generated and calculations of 
+max,min,mean, range and standard deviation is preformed
+from those numbers.
+******************************************/
+import java.util.Scanner;
+import java.io.*;
+import java.util.Random;
+
+
+public class Prog02 {
+ public static void main(String[] args) throws IOException {
+  //Declare variables
+  final int GAUSS_STDEV = 10;
+  final int GAUSS_MEAN = 75;
+  int randomNumbersAmount;
+  int randomNum;
+  int gaussNumbers;
+  int count;
+  int maxValue = 0;
+  int minValue = 100;
+  int gaussMaxValue = 0;
+  int gaussMinValue = 100;
+  int range;
+  int gaussRange;
+  int gaussMean = 0;
+  double mean = 0;
+  double standardDeviation = 0;
+  double gaussStandardDeviation = 0;
+  Scanner keyboard = new Scanner(System.in);
+  Random randomNumbers = new Random();
+
+  //Creates file that I will put data into
+  File file = new File("regNums.txt");
+  PrintWriter regFile = new PrintWriter(file);
+
+  File inFile = new File("gaussNums.txt");
+  PrintWriter gaussFile = new PrintWriter(inFile);
+
+  File barFile = new File("barChartFile.txt");
+  PrintWriter barOut = new PrintWriter(barFile);
+
+  //Ask user for number of random n
+  System.out.print("How many random numbers (0...100) should I generate: ");
+  randomNumbersAmount = keyboard.nextInt();
+  System.out.println();
+
+  for (count = 0; count < randomNumbersAmount; count++) {
+
+   randomNum = randomNumbers.nextInt(100);
+   gaussNumbers = (int)(randomNumbers.nextGaussian() * GAUSS_STDEV + GAUSS_MEAN);
+
+   regFile.println(randomNum);
+   gaussFile.println(gaussNumbers);
+
+  }
+  //Closes files
+  regFile.close();
+  gaussFile.close();
+
+  Scanner inputFile = new Scanner(file);
+  Scanner iFile = new Scanner(inFile);
+
+  while (inputFile.hasNext()) {
+
+   //Set variable equal to numbers in reNums.txt file
+   int regNumber = inputFile.nextInt();
+   int gaussNums = iFile.nextInt();
+   mean = mean + regNumber;
+   gaussMean = gaussMean + gaussNums;
+   //if statements that determine man and mins
+   if (regNumber > maxValue) {
+    maxValue = regNumber;
+   }
+   if (regNumber < minValue) {
+    minValue = regNumber;
+   }
+   if (gaussNums < gaussMinValue) {
+    gaussMinValue = gaussNums;
+   }
+   if (gaussNums > gaussMaxValue) {
+    gaussMaxValue = gaussNums;
+   }
+  }
+  mean = mean / randomNumbersAmount;
+  gaussMean = gaussMean / randomNumbersAmount;
+  inputFile.close();
+
+  Scanner standardDev = new Scanner(file);
+  Scanner gaussStandardDev = new Scanner(inFile);
+  //While loop determines standard deviation
+  while (standardDev.hasNext()) {
+   randomNum = standardDev.nextInt();
+   int newgaussNums = gaussStandardDev.nextInt();
+   //Adds all numbers up and prefroms standard deviation calculations
+   standardDeviation += ((randomNum - mean) * (randomNum - mean));
+   gaussStandardDeviation += ((newgaussNums - gaussMean) * (newgaussNums - gaussMean));
+  }
+  standardDeviation = Math.sqrt(standardDeviation / randomNumbersAmount);
+  gaussStandardDeviation = Math.sqrt(gaussStandardDeviation / randomNumbersAmount);
+  //Preforms calculations for range
+  range = maxValue - minValue + 1;
+  gaussRange = gaussMaxValue - gaussMinValue + 1;
+  // Displays data for regNums.txt
+  System.out.println("Measures for the unifromly distributed integers in file, regNums.txt:");
+  System.out.println("  Min: " + minValue);
+  System.out.println("  Max: " + maxValue);
+  System.out.println("Range: " + range);
+  System.out.println(" Mean: " + mean);
+  System.out.println("StDev: " + standardDeviation);
+  //Opens file and puts data into regNums.txt
+  regFile = new PrintWriter(file);
+  regFile.println("Measures for the unifromly distributed integers in file, regNums.txt:");
+  regFile.println("  Min: " + minValue);
+  regFile.println("  Max: " + maxValue);
+  regFile.println("Range: " + range);
+  regFile.println(" Mean: " + mean);
+  regFile.println("StDev: " + standardDeviation);
+  regFile.close();
+
+  System.out.println("Bar chart for the normally distributed integers in file, gaussNums.txt (50...100): ");
+
+  //Loop will preform calculations for barChartFile.txt		
+  for (count = 50; count <= 100; count++) {
+
+   System.out.println();
+   barOut.println();
+   System.out.print(count + ":");
+   barOut.print(count + ":");
+   Scanner secondInput = new Scanner(inFile);
+   while (secondInput.hasNext()) {
+    int gaussNumber = secondInput.nextInt();
+    if (gaussNumber == count) {
+     System.out.print("*");
+
+     barOut.print("*");
+    }
+   }
