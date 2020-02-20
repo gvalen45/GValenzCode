@@ -1,0 +1,284 @@
+
+/*********************************************************
+Jose Gabriel Valenzuela 
+This program performs 4 diffrent options using a text file
+called "LargestObjects.txt" It can display the whole file,
+a select line of data from the file, how many planets can fit
+into another selected planet, and  decade ranges.
+*********************************************************/
+import java.util.Scanner;
+import java.io.*;
+
+class PlanetData {
+
+	// Declares variables
+	String planetName;
+	String discovererName;
+	double planetDiameterKM;
+	int yearDiscovered;
+
+}
+
+public class prog3 {
+
+	// Creates scanner
+	public static Scanner kb = new Scanner(System.in);
+	public static final int exitMenu = 5;
+
+	public static void main(String[] args) {
+
+		// User welcome message
+		System.out.println("Greetings earthling! This application displays");
+		System.out.println("data on multiple celestial bodies in your ");
+		System.out.println("Solar System using a database. ");
+		System.out.println();
+		// Prompts the user to select 1-5
+		System.out.println("What would you like displayed? (Enter 1-5) ");
+		System.out.println("Enter 1 to display data on all the planets");
+
+		System.out.println("Enter 2 to select a planet to display data on");
+
+		System.out.println("Enter 3 compute how many Earths would fit in ");
+		System.out.println("all planets within a certain range of diameter");
+
+		System.out.println("Enter 4 to display the distribution of planets");
+		System.out.println("by year discovered");
+
+		System.out.println("Enter 5 to exit program");
+		System.out.println();
+
+		// Calls method menu
+		menu();
+
+	}
+
+	// Method that displays the heading
+	public static void dataHeading() {
+
+		// Heading for data output
+		System.out.println("********************************************" + "*******************************");
+		System.out.printf("%-10s", "Planet");
+		System.out.printf("%25s", "Discoverer");
+		System.out.printf("%20s", "Diameter in km");
+		System.out.printf("%20s\n", "Year Discovered");
+		System.out.println("********************************************" + "*******************************");
+	}
+
+	// Method for option 1
+	public static void displayAllPlanets(PlanetData[] planets, int _nPlanets) {
+
+		// Displays heading
+		dataHeading();
+		// For loop keeps printing each line of data until the number of plantetss
+		// has been reached
+		for (int count = 0; count < (_nPlanets); count++) {
+
+			System.out.printf("%-10s", planets[count].planetName);
+			System.out.printf("%25s", planets[count].discovererName);
+			System.out.printf("%20.0f", planets[count].planetDiameterKM);
+			System.out.printf("%20d\n", planets[count].yearDiscovered);
+
+		}
+
+	}
+
+	// Method for option 2 that displays select data
+	public static void displaySelectedPlanet(PlanetData[] planets) {
+
+		// Declares variables
+		int count = 0;
+		String userPlanet;
+
+		// Asks the user what planet they would like displayed
+		System.out.print(" Please enter the planet you would like to display");
+		System.out.print("\n Exact Spelling please: ");
+		// Gets the users planet input
+		userPlanet = kb.next();
+
+		// Displays heading
+		dataHeading();
+
+		// loops until planetName at count is equal to userPlanet
+		while (!planets[count].planetName.equals(userPlanet))
+			++count;
+
+		// Prints all data at of planets at count
+		System.out.printf("%-10s", planets[count].planetName);
+		System.out.printf("%25s", planets[count].discovererName);
+		System.out.printf("%20.0f", planets[count].planetDiameterKM);
+		System.out.printf("%20d\n", planets[count].yearDiscovered);
+
+	}
+
+	// Decade method
+	public static void decades(PlanetData[] planets, int _nPlanets) {
+		// declares variables
+		int maxYear = planets[0].yearDiscovered;
+		int minYear = planets[0].yearDiscovered;
+		int count = 0;
+		// for, loops though the file finding the max year and min year
+		for (int t = 0; t < _nPlanets; t++) {
+			// max years set
+			if (planets[t].yearDiscovered > maxYear) {
+				maxYear = planets[t].yearDiscovered;
+			}
+			// min years set
+			if (planets[t].yearDiscovered < minYear) {
+				minYear = planets[t].yearDiscovered;
+			}
+		}
+		// displays max and mij
+		System.out.println("Min" + minYear);
+		System.out.println("Max" + maxYear);
+		// Calculates range
+		int range = maxYear - minYear;
+
+		int decade[] = new int[10];
+
+		int decadeIndex = minYear;
+		// counts decades
+		do {
+
+			if (count == 0) {
+				decade[count] = minYear;
+
+			} else {
+
+				decade[count] = decadeIndex + (range / 10);
+				System.out.println(decade[count]);
+
+			}
+
+			decadeIndex = decadeIndex + (range / 10);
+
+			count++;
+		} while (count != 10);
+
+	}
+
+	// Method that determines how many planets would fit inside another
+	public static void howManyPlanetsWouldFit(PlanetData[] planets) {
+		// declares variables
+		int count = 0;
+		String userPlanet1;
+		String userPlanet2;
+		double planetFitApprox;
+		// creates an array of 2
+		double[] selectedPlanets = new double[2];
+
+		// Ask for user input
+		System.out.print("Enter the larger celestial object : ");
+		userPlanet1 = kb.next();
+		// returns the volume of planet
+		selectedPlanets[0] = findPlanetVolume(planets, userPlanet1);
+
+		System.out.print("Enter the smaller celestial object : ");
+		userPlanet2 = kb.next();
+		// returns the volume of planet
+		selectedPlanets[1] = findPlanetVolume(planets, userPlanet2);
+		// Determines the approximations of how many planets can fit in another
+		planetFitApprox = selectedPlanets[0] / selectedPlanets[1];
+
+		if (planetFitApprox < 1) {
+			System.out.println("Opps! You tried fitting a larger celestial object\n"
+					+ "into a smaller object, flip your inputs and try again!");
+			System.out.print("Enter 3 to try again or select another option.");
+		} else
+			System.out.println(
+					userPlanet2 + " would fit into " + userPlanet1 + ",  approximately " + planetFitApprox + " times!");
+
+	}
+
+	// Method to find the volume of a planet to use in howManyPlanetsWouldFit
+	// Calculations
+	public static double findPlanetVolume(PlanetData[] planets, String planet) {
+
+		// declares variables
+		int count = 0;
+		double planetVolume;
+
+		String userPlanet = planet;
+		// While loops finds the planet
+		while (!planets[count].planetName.equals(userPlanet))
+			++count;
+		// calculates the volume
+		planetVolume = (4.0 / 3.0) * Math.PI * Math.pow(planets[count].planetDiameterKM / 2, 3);
+
+		// returns the volume
+		return planetVolume;
+	}
+
+	// Method that loads the planets into the array 'planets'
+	private static int loadPlanets(PlanetData[] planets) {
+
+		int _nPlanets = 0;
+
+		try {
+
+			// Allows access to the file "LargestObjects.txt"
+			File file = new File("LargestObjects.txt");
+			// Creates scanner object of the file
+			Scanner inFile = new Scanner(file);
+
+			// do while Loop repeats loading the input of each line into
+			// varibles of class PlanetData
+			do {
+
+				planets[_nPlanets] = new PlanetData();
+				planets[_nPlanets].planetName = inFile.next();
+				planets[_nPlanets].discovererName = inFile.next();
+				planets[_nPlanets].planetDiameterKM = inFile.nextDouble();
+				planets[_nPlanets].yearDiscovered = inFile.nextInt();
+				_nPlanets++;
+				// Do-while repeats until "EOF" marker is hit
+			} while (!planets[_nPlanets - 1].planetName.equals("EOF"));
+			--_nPlanets;
+
+		}
+		// Catch catches any file exceptions and displays a error message
+		catch (IOException ioe) {
+			System.out.println("File access error");
+			_nPlanets = 0;
+		}
+		return _nPlanets;
+	}
+
+	// Method that serves as the menu options
+	public static void menu() {
+
+		int menuChoice = kb.nextInt();
+
+		// Creates a array of class PlanetData
+		PlanetData[] planets = new PlanetData[100];
+
+		int nPlanets;
+		// gets the number of planets from method loadPlanets
+		nPlanets = loadPlanets(planets);
+
+		do {
+			// If and else decide which menu option to display
+			if (menuChoice == 1) {
+
+				displayAllPlanets(planets, nPlanets);
+
+			} else if (menuChoice == 2) {
+
+				displaySelectedPlanet(planets);
+			} else if (menuChoice == 3) {
+
+				howManyPlanetsWouldFit(planets);
+			} else if (menuChoice == 4) {
+				decades(planets, nPlanets);
+
+			} else {
+
+				System.out.print("INVALID OPTION HUMAN");
+
+			}
+
+			System.out.println("\n What would like to do next? select 1-5");
+
+			menuChoice = kb.nextInt();
+		} while (menuChoice != exitMenu);
+	}
+}
