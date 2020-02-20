@@ -1,0 +1,257 @@
+/*******************************************************
+Gabriel Valenzuela September 10th 2019
+
+This program is a loan calculator. It can either calculate
+how much your loan will be after specified periods or
+it can calculate how long(periods) it will take to payoff/
+reach a loan goal.
+
+*********************************************************/
+import java.util.Scanner;
+
+public class program2 {
+   
+   
+   // Makes scanner avaliable to all subprograms
+	public static Scanner kb = new Scanner(System.in);
+
+	public static void main(String[] args) {
+      
+      // Declare Variables
+		char usersCase;
+		double initialBalance;
+      double balanceGoal;
+		double threshold;
+		double processingCharge;
+		double periodicPayment;
+		double annualIntrestRate;
+		char periodTypeDMY;
+		String period = null;
+      
+      //Greetings to user
+		System.out.println(" Hello! This app calculates the remaining" 
+                           + " balance on a bank loan");
+		//Data inputs requested
+      System.out.println(" or helps you set a balance goal");
+		
+      System.out.print(" Enter the processing charge $");
+		processingCharge = kb.nextDouble();
+      
+      System.out.print(" Enter the threshold $");
+		threshold = kb.nextDouble();
+
+
+      System.out.print(" Enter the initial balance $");
+		initialBalance = kb.nextDouble();
+
+		
+				System.out.print(" Enter the periodic payment $");
+		periodicPayment = kb.nextDouble();
+
+		System.out.print(" Enter the annual intrest rate percent ");
+		annualIntrestRate = kb.nextDouble();
+		//Turns the user's intrest percent into .00 from i.e. 10% is 0.10 
+      annualIntrestRate = annualIntrestRate / 100;
+
+		System.out.println(" Enter the period which interest is  compounded.");
+		System.out.print(" Please enter D for Daily, M for Monthly,or Y for Yearly?");
+      periodTypeDMY = kb.next().toUpperCase().charAt(0);
+		
+      //Forces the user to enter a valid period type
+      do {
+
+			if (periodTypeDMY == 'Y') {
+				period = "Year";
+			} else if (periodTypeDMY == 'M') {
+				period = "Month";
+			} else if (periodTypeDMY == 'D') {
+				period = "Day";
+			} else {
+
+				System.out.print("INVALID PERIOD ENTERED:  please enter D for Daily," 
+                              + "\n M for Monthly,or Y for Yearly");
+				periodTypeDMY = kb.next().toUpperCase().charAt(0);
+			}
+		} while (period == null);
+      
+      //Data requested
+		System.out.print(" Would you like to compute the final balance (A)" +
+                         "\n or set a goal (B)? Enter A or B. ");
+		usersCase = kb.next().toUpperCase().charAt(0);
+      
+      //If and else statement executes calaulations for options A or B 
+		if (usersCase == 'A') {
+			System.out.println(" Option A :");
+         
+         //Calls option A method
+			optionA(initialBalance, periodicPayment, annualIntrestRate, period, 
+                  processingCharge, threshold);
+
+		} else if (usersCase == 'B') {
+         
+         //Data request for loan Goal
+			System.out.println(" Option B :");
+         System.out.print(" What is your loan goal? $");
+         balanceGoal = kb.nextDouble();
+         
+         //Calls option B method
+         optionB(initialBalance, periodicPayment, annualIntrestRate, period, 
+                  processingCharge, threshold, balanceGoal);
+
+       //Error message for invalid option
+		} else {
+         
+         
+			System.out.print("INVALID CASE: TERMINATING");
+
+		}
+
+	}
+   
+   //Option A method
+	public static void optionA(double initialBalance, double periodicPayment, 
+                              double annualIntrestRate, String period,
+			                     double processingCharge, double threshold) {
+      
+      //Data variables
+		double interest;
+		double newBalance = 0;
+		int periodCycles;
+		char tableQuestion;
+		double oldBalance = initialBalance;
+		
+      
+      //Data request
+      System.out.print(" Please enter the number of " + period + "s : ");
+		periodCycles = kb.nextInt();
+      
+      //Asks user if they would like a table
+		System.out.print(" Would you like a table display? (Y/N) ");
+		tableQuestion = kb.next().toUpperCase().charAt(0);
+      
+      //If and else statements chose to display table or not
+		if (tableQuestion == 'Y') {
+
+			System.out.println(period + "       Balance");
+			System.out.println("  0       " + initialBalance);
+         
+         //for - loop creates table and performs calulations for Option A
+			for (int i = 0 ; i < periodCycles; i++) {
+
+				newBalance = getNewBalance(oldBalance, periodicPayment, threshold,
+                                        annualIntrestRate, processingCharge);
+				oldBalance = newBalance;
+
+				createTable(i, initialBalance, newBalance, period);
+
+			}
+		} else {
+			//for - loop performs calulationms for option A
+         for (int j = 0; j > periodCycles; j++) {
+
+				newBalance = getNewBalance(oldBalance, periodicPayment, threshold, 
+                           annualIntrestRate, processingCharge);
+				oldBalance = newBalance;
+			}
+			// Prints option A results with no table
+         System.out.print(period + " " + periodCycles + " new balance is");
+			System.out.print(" " + newBalance);
+
+		}
+
+	}
+   //Method that creates table
+	public static void createTable(int i, double initialBalance, double newBalance, 
+                                 String period) {
+
+		i = i + 1;
+
+		System.out.println("  " + i + "       " + newBalance);
+
+	}
+   //Methos that performs New Balance calulations
+	public static double getNewBalance(double oldBalance, double periodicPayment, double threshold,
+			double annualIntrestRate, double processingCharge) {
+		//declare variables
+      double interest;
+		double newBalance;
+      
+      //If and Else check if the processing charge will be added to new Balcance
+		if (periodicPayment >= threshold) {
+			//new balance and interest formulas
+         interest = oldBalance * annualIntrestRate;
+			newBalance = oldBalance + interest - periodicPayment;
+
+		} else {
+			//new balance and interest formulas
+         interest = oldBalance * annualIntrestRate;
+			newBalance = oldBalance + processingCharge + interest - periodicPayment;
+
+		}
+      //returns new balance
+		return newBalance;
+	}
+      //Method for option B
+      public static void optionB(double initialBalance, double periodicPayment, 
+                              double annualIntrestRate, String period,
+			                     double processingCharge, double threshold,
+                              double balanceGoal) {
+       
+       //Declares variables
+       double oldBalance = initialBalance;
+       double newBalance = oldBalance;
+       char tableQuestion;
+       
+       //Asks user if they would like a table
+       System.out.print(" Would you like a table display? (Y/N) ");
+		 tableQuestion = kb.next().toUpperCase().charAt(0);
+         
+         
+       //if and else decides to display table based on users input
+		 if (tableQuestion == 'Y') {
+         
+         System.out.println(period + "       Balance");
+		   System.out.println("  0       " + initialBalance);
+         //declares variable for counting loop iterations to display on table
+         int x = 0; 
+            
+            //do-while loop repeats until new balance has met the users balance goal
+            do{
+               
+               // performs calculations for new balance
+               newBalance = getNewBalance(oldBalance, periodicPayment, threshold, 
+                             annualIntrestRate, processingCharge);
+               oldBalance = newBalance;
+
+		         createTable(x, initialBalance, newBalance, period);
+               // increases loop-interation counter by 1
+                x++;
+        
+                 }while(newBalance >= balanceGoal);
+                             
+                              
+     // else condtion is for no table display for option B                     
+     }else {
+        
+        //creates counter for loop-iterations
+       
+        int count = 0;
+        
+        //do-while loop repeats until new balance has met the users balance goal
+        do{
+       
+        newBalance = getNewBalance(oldBalance, periodicPayment, threshold, 
+                           annualIntrestRate, processingCharge);
+        oldBalance = newBalance;
+        // increaes loop iteraiton counter by 1
+        count++;
+        }while(newBalance >= balanceGoal);
+        //Displays option B results with  no table display
+        System.out.print("It will take " + count + " " + period + "s " 
+                          + "to reach your goal.");
+     
+     
+     }
+
+   }
+}
